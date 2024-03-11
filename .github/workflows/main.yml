@@ -1,0 +1,27 @@
+name: Sync to GitLab
+
+on:
+  push:
+    branches-ignore:
+      - 'gitlab-sync'  # 忽略 'gitlab-sync' 分支，避免无限循环同步
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # 获取完整的历史记录
+        
+
+      - name: Push to GitLab
+        run: |
+          git remote add gitlab https://gitlab.eduxiji.net/T202410007992527/OSKernel2024-Kinako.git
+          git fetch --all
+          for branch in $(git branch --format='%(refname:short)'); do
+            if [[ "$branch" != "gitlab-sync" ]]; then
+              git -c http.extraHeader="Authorization: Basic $(echo -n ${{ secrets.GITLAB_AUTH }} | base64)" push gitlab "$branch" -f
+            fi
+          done
