@@ -1,0 +1,1 @@
+/home/xiaochen/oskernel2024-kinako/kernel/target/riscv64gc-unknown-none-elf/debug/kernel: /home/xiaochen/oskernel2024-kinako/kernel/src/lang_items.rs /home/xiaochen/oskernel2024-kinako/kernel/src/main.rs
