@@ -1,2 +1,5 @@
 kernel/target/
 kernel/Cargo.lock
+
+user/target/
+user/Cargo.lock
