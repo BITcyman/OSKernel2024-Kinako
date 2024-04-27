@@ -3,15 +3,31 @@
 #![no_main]
 #![feature(panic_info_message)]
 
-mod lang_items;
+
+#[macro_use]
 mod console;
+
+#[macro_use]
+extern crate log;
+
 mod sbi;
 mod logging;
+mod lang_items;
+
+
+mod sync;
+mod syscall;
+mod trap;
+mod batch;
+
+#[path = "boards/qemu.rs"]
+mod board;
 
 use core::arch::global_asm;
 use log::*;
 
 global_asm!(include_str!("entry.asm"));
+global_asm!(include_str!("link_app.S"));
 
 // fn main() {
 //     // println!("Hello, world!");
@@ -23,6 +39,25 @@ pub fn rust_main() -> ! {
     // sbi::console_putchar( 'a' as usize );
     // sbi::console_putchar( '\n' as usize);
     println!("Here is Kinako!");
+    logging::init();
+    print_kernel_info();
+    trap::init();
+    batch::init();    
+    batch::run_next_app();
+    // loop{}
+}
+
+fn clear_bss() {
+    extern  "C" {
+        fn sbss();
+        fn ebss();
+    }
+    (sbss as usize..ebss as usize).for_each(|a| {
+        unsafe { (a as *mut u8).write_volatile(0)}
+    });
+}
+
+fn print_kernel_info () {
     extern "C" {
         fn stext(); // begin addr of text segment
         fn etext(); // end addr of text segment
@@ -35,9 +70,7 @@ pub fn rust_main() -> ! {
         fn boot_stack_lower_bound(); // stack lower bound
         fn boot_stack_top(); // stack top
     }
-    clear_bss();
-    logging::init();
-    println!("[kernel] Hello, world!");
+    println!("[kernel] This is Kinako!");
     trace!(
         "[kernel] .text [{:#x}, {:#x})",
         stext as usize,
@@ -56,18 +89,5 @@ pub fn rust_main() -> ! {
         boot_stack_top as usize, boot_stack_lower_bound as usize
     );
     error!("[kernel] .bss [{:#x}, {:#x})", sbss as usize, ebss as usize);
-    
-    sbi::shutdown(false);
-
-
 }
 
-fn clear_bss() {
-    extern  "C" {
-        fn sbss();
-        fn ebss();
-    }
-    (sbss as usize..ebss as usize).for_each(|a| {
-        unsafe { (a as *mut u8).write_volatile(0)}
-    });
-}

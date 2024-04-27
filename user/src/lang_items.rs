@@ -1,4 +1,3 @@
-use crate::println;
 
 #[panic_handler]
 fn panic_handler(panic_info: &core::panic::PanicInfo) -> ! {
@@ -13,5 +12,5 @@ fn panic_handler(panic_info: &core::panic::PanicInfo) -> ! {
     } else {
         println!("Panicked: {}", err);
     }
-    loop {}
+    loop { }
 }

@@ -1,5 +1,6 @@
 kernel/target/
 kernel/Cargo.lock
+kernel/src/link_app.S
 
 user/target/
 user/Cargo.lock

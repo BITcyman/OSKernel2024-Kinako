@@ -1,7 +1,6 @@
 //! Global logger
 
 use log::{self, Level, LevelFilter, Log, Metadata, Record};
-use crate::println;
 
 /// a simple logger
 struct SimpleLogger;

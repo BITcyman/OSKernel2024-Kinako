@@ -3,6 +3,7 @@
 #![feature(panic_info_message)]
 
 mod syscall;
+#[macro_use]
 pub mod console;
 mod lang_items;
 

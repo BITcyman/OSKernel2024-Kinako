@@ -4,5 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 sbi-rt = { version = "0.0.2", feature = ["legacy"] }
+riscv = { git = "https://gitee.com/rcore-os/riscv", features = ["inline-asm"] }
 log = "0.4"
