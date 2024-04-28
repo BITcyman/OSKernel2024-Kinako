@@ -7,8 +7,6 @@
 #[macro_use]
 mod console;
 
-#[macro_use]
-extern crate log;
 
 mod sbi;
 mod logging;
@@ -18,7 +16,10 @@ mod lang_items;
 mod sync;
 mod syscall;
 mod trap;
-mod batch;
+mod task;
+mod loader;
+mod timer;
+mod config;
 
 #[path = "boards/qemu.rs"]
 mod board;
@@ -36,15 +37,15 @@ global_asm!(include_str!("link_app.S"));
 #[no_mangle]
 pub fn rust_main() -> ! {
     clear_bss();
-    // sbi::console_putchar( 'a' as usize );
-    // sbi::console_putchar( '\n' as usize);
-    println!("Here is Kinako!");
     logging::init();
     print_kernel_info();
     trap::init();
-    batch::init();    
-    batch::run_next_app();
-    // loop{}
+    loader::load_apps();
+    println!("[kernel] load apps finished");
+    trap::enable_timer_interrupt();
+    timer::set_next_trigger();
+    task::run_first_task();
+    loop{}
 }
 
 fn clear_bss() {

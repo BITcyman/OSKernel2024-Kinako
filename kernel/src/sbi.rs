@@ -3,6 +3,7 @@ use core::arch::asm;
 // use std::intrinsics::unreachable;
 
 const SBI_CONSOLE_PUTCHAR: usize = 1;
+const SBI_SET_TIMER: usize = 0;
 
 /// general sbi call
 #[inline(always)]
@@ -31,3 +32,7 @@ pub fn shutdown() -> ! {
     crate::board::QEMU_EXIT_HANDLE.exit_failure();
 }
 
+
+pub fn set_timer(timer: usize) {
+    sbi_call(SBI_SET_TIMER, timer, 0, 0);
+}
